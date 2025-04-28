@@ -5,8 +5,6 @@ from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.cuda.amp import autocast, GradScaler
-scaler = GradScaler()
 
 from model import CustomCNN
 from evaluate import evaluate
@@ -15,7 +13,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lr = 0.1
 epochs = 10
-batch_size = 256
+batch_size =256
 
 train_dataset, test_dataset = load_kmnist()
 
@@ -37,12 +35,10 @@ for epoch in range(epochs):
     for x_batch, t_batch in pbar:
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
         optimizer.zero_grad()
-        with autocast():
-            y = network(x_batch) 
-            loss = criterion(y, t_batch)
-        scaler.scale(loss).backward()
-        scaler.step(optimizer)
-        scaler.update()
+        y = network(x_batch) 
+        loss = criterion(y, t_batch)
+        loss.backward()
+        optimizer.step()
 
         running_loss += loss.item()
 
