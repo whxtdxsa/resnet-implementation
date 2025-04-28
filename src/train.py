@@ -1,9 +1,12 @@
+from tqdm import tqdm
 from data.kmnist import load_kmnist
 from torch.utils.data import DataLoader
 
 import torch
 import torch.nn as nn
-import torch.optim as optim 
+import torch.optim as optim
+from torch.cuda.amp import autocast, GradScaler
+scaler = GradScaler()
 
 from model import CustomCNN
 from evaluate import evaluate
@@ -12,12 +15,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lr = 0.1
 epochs = 10
-batch_size = 1
+batch_size = 256
 
 train_dataset, test_dataset = load_kmnist()
 
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, pin_memory=True)
 
 network = CustomCNN().to(device)
 criterion = nn.CrossEntropyLoss()
@@ -30,13 +33,16 @@ test_acc_list = []
 for epoch in range(epochs):
     network.train()
     running_loss = 0.0
-    for x_batch, t_batch in train_loader:
+    pbar = tqdm(train_loader, desc=f"Epoch {epoch}/{epochs}")
+    for x_batch, t_batch in pbar:
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
         optimizer.zero_grad()
-        y = network(x_batch) 
-        loss = criterion(y, t_batch)
-        loss.backward()
-        optimizer.step()
+        with autocast():
+            y = network(x_batch) 
+            loss = criterion(y, t_batch)
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
         running_loss += loss.item()
 
