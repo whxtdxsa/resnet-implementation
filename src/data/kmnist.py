@@ -1,11 +1,11 @@
 from torchvision import datasets, transforms
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
-img_height = img_width = 224
+# img_height = img_width = 224
 
 def load_kmnist():
     transform = transforms.Compose([
-        transforms.Resize((img_height, img_width)),
+        # transforms.Resize((img_height, img_width)),
         transforms.ToTensor(),
     ])
 

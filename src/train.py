@@ -1,26 +1,28 @@
 from tqdm import tqdm
 from data.kmnist import load_kmnist
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from model import CustomCNN
+# from model.resnet import ResNet
+from model.mini_resnet import MiniResNet as MyModel
 from evaluate import evaluate
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-lr = 0.1
-epochs = 10
-batch_size =256
+lr = 0.07
+epochs = 40
+batch_size = 128
 
 train_dataset, test_dataset = load_kmnist()
+# train_dataset, test_dataset = Subset(train_dataset, range(30000)), Subset(test_dataset, range(1000))
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, pin_memory=True)
 
-network = CustomCNN().to(device)
+network = MyModel().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(network.parameters(), lr)
 
@@ -50,32 +52,7 @@ for epoch in range(epochs):
     test_acc_list.append(test_acc)
     print(f"epoch {epoch}: train_loss = {running_loss/len(train_loader):.4f}, train_acc = {train_acc:.4f}, test_acc = {test_acc:.4f}")
 
-
-import numpy as np
-import matplotlib.pyplot as plt
+from plot import plotting
 path = "/data/data/com.termux/files/home/storage/dcim/Graph"
-# path = "."
-x1 = np.arange(len(train_loss_list))
-x2 = np.arange(len(train_acc_list))
-
-plt.figure(figsize=(10, 4))
-
-plt.subplot(1, 2, 1)  
-plt.plot(x1, train_loss_list, label='train loss')
-plt.xlabel("iters")
-plt.ylabel("loss")
-plt.legend()
-plt.title("Loss Curve")
-
-plt.subplot(1, 2, 2) 
-plt.plot(x2, train_acc_list, label='train acc')
-plt.plot(x2, test_acc_list, label='test acc')
-plt.xlabel("epochs")
-plt.ylabel("accuracy")
-plt.legend()
-plt.title("Accuracy Curve")
-
-plt.tight_layout()  
-plt.savefig(path + '/CustomCNN_cnn.png')
-plt.clf()
-
+file_name = "result"
+plotting(train_loss_list, train_acc_list, test_acc_list, file_name, path)
