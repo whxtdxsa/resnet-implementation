@@ -104,7 +104,7 @@ class MiniResNet_v2(nn.Module):
 
         return x
 
-class MiniResNet_v3(nn.Module):
+class MiniResNet(nn.Module):
     # Sora
     def __init__(self):
         super().__init__()
@@ -116,7 +116,7 @@ class MiniResNet_v3(nn.Module):
         self.layer2 = self._build_layer(32, 64)
         self.layer3 = self._build_layer(64, 64)
 
-        self.avepool = nn.AdaptiveAvgPool2d(kernel_size=7, stride=1, padding=0)
+        self.avepool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(64, 10)
         self.relu = nn.ReLU()
 

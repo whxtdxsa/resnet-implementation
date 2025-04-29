@@ -12,9 +12,9 @@ from evaluate import evaluate
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-lr = 0.07
-epochs = 40
-batch_size = 128
+lr = 0.05
+epochs = 10
+batch_size = 64
 
 train_dataset, test_dataset = load_kmnist()
 # train_dataset, test_dataset = Subset(train_dataset, range(30000)), Subset(test_dataset, range(1000))
