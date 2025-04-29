@@ -40,7 +40,7 @@ class ResNet(nn.Module):
         self.layer3 = self._build_layer(128, 256)
         self.layer4 = self._build_layer(256, 512)
 
-        self.avepool = nn.AvgPool2d(kernel_size=7, stride=1, padding=0)
+        self.avepool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(512, 10)
         self.relu = nn.ReLU()
 

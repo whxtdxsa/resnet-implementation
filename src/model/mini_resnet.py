@@ -37,7 +37,7 @@ class MiniResNet_v1(nn.Module):
 
         self.layer1 = self._build_layer(16, 32)
 
-        self.avepool = nn.AvgPool2d(kernel_size=7, stride=1, padding=0)
+        self.avepool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(32, 10)
         self.relu = nn.ReLU()
 
@@ -75,7 +75,7 @@ class MiniResNet_v2(nn.Module):
         self.layer2 = self._build_layer(16, 32)
         self.layer3 = self._build_layer(32, 32)
 
-        self.avepool = nn.AvgPool2d(kernel_size=7, stride=1, padding=0)
+        self.avepool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(32, 10)
         self.relu = nn.ReLU()
 
