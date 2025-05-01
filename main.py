@@ -1,4 +1,4 @@
-from models.mini_resnet import MiniResNet as MyModel 
+from models.mini_resnet import MiniResNet_v3 as MyModel 
 from data.loader import get_kmnist_dataloaders 
 from train.trainer import train_one_epoch, test_one_epoch, evaluate
 
@@ -23,7 +23,7 @@ def main():
     set_seed(seed)
 
     # Set logger
-    model_name = "mini_resnet_v1"
+    model_name = "mini_resnet_v3"
     writer = get_writer(f"experiments/{model_name}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
 
     # Set device

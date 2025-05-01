@@ -104,7 +104,7 @@ class MiniResNet_v2(nn.Module):
 
         return x
 
-class MiniResNet(nn.Module):
+class MiniResNet_v3(nn.Module):
     # Sora
     def __init__(self):
         super().__init__()
