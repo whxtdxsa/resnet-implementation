@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-import datetime
 import yaml
 from utils.misc import set_seed, get_writer, log_tensorboard
 
@@ -24,8 +23,8 @@ def main():
     set_seed(seed)
 
     # Set logger
-    start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    writer = get_writer(f"experiments/{start_time}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
+    model_name = "mini_resnet_v1"
+    writer = get_writer(f"experiments/{model_name}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
