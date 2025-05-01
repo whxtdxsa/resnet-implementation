@@ -1,50 +1,65 @@
 from models.mini_resnet import MiniResNet as MyModel 
 from data.loader import get_kmnist_dataloaders 
-from train.trainer import train_one_epoch, evaluate
+from train.trainer import train_one_epoch, test_one_epoch, evaluate
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
+import datetime
 import yaml
-from utils.misc import set_seed, plot_learning_curve, get_writer, log_tensorboard
+from utils.misc import set_seed, get_writer, log_tensorboard
 
 
 def main():
-    writer = get_writer("runs/exp")
-    with open("config/default.yaml") as f:
-        cfg = yaml.safe_load(f)
+    ### Import init_setting
 
-    print(cfg)
-    set_seed(cfg["seed"])
+    # Get hyperparams
+    with open("config/default.yaml") as f: 
+        cfg = yaml.safe_load(f)
+        print(cfg)
+        batch_size, epochs, lr, seed,  = cfg["batch_size"], cfg["epochs"], cfg["lr"], cfg["seed"]
     
+    # Set Seed
+    set_seed(seed)
+
+    # Set logger
+    start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    writer = get_writer(f"experiments/{start_time}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
+
+    # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
-    
 
-    train_loader, test_loader = get_kmnist_dataloaders(batch_size=cfg["batch_size"]) 
+
+    ### Define train procedure
+
+    # Get loader
+    train_loader, test_loader = get_kmnist_dataloaders(batch_size=batch_size) 
     
+    # Set Model, Criterion, Optimizer
     network = MyModel().to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(network.parameters(), cfg["lr"])
+    optimizer = optim.SGD(network.parameters(), lr)
 
     train_losses = []
-    test_accuracies = []
-    for epoch in range(1, cfg["epochs"] + 1):
-        print(f"Epoch {epoch}/{cfg["epochs"]}")
+    test_losses = []
+
+    # Training
+    for epoch in range(1, epochs + 1):
+        print(f"Epoch {epoch}/{epochs}")
         train_loss = train_one_epoch(network, train_loader, optimizer, criterion, device)
         train_losses.append(train_loss)
 
-        test_acc = evaluate(network, test_loader, device)
-        test_accuracies.append(test_acc)
-        log_tensorboard(writer, epoch, train_loss, test_acc)
+        test_loss = test_one_epoch(network, test_loader, criterion, device)
+        test_losses.append(test_loss)
+
+        log_tensorboard(writer, epoch, train_loss, test_loss)
+
     writer.close()
-    print(f"Train Loss: {train_loss:.4f} | Test Acc: {test_acc:.4f}")
-    plot_learning_curve(train_losses, test_accuracies)
+    test_acc = evaluate(network, test_loader, device)
+    print(f"Test Acc: {test_acc:.4f}")
 
 main()
 
-#from plot import plotting
-#path = "/data/data/com.termux/files/home/storage/dcim/Graph"
-#file_name = "result"
-#plotting(train_loss_list, train_acc_list, test_acc_list, file_name, path)
+

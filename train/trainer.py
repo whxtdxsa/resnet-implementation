@@ -18,6 +18,22 @@ def train_one_epoch(network, dataloader, optimizer, criterion, device):
 
     return total_loss / len(dataloader)
 
+
+def test_one_epoch(network, dataloader, criterion, device):
+    network.eval()
+    total_loss = 0
+
+    for x_batch, t_batch in tqdm(dataloader, desc="Testing"):
+        x_batch, t_batch = x_batch.to(device), t_batch.to(device)
+
+        y_batch = network(x_batch)
+        loss = criterion(y_batch, t_batch)
+
+        total_loss += loss.item()
+
+    return total_loss / len(dataloader)
+
+
 def evaluate(network, dataloader, device):
     network.eval()
     correct = 0
