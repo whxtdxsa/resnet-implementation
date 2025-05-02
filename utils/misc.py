@@ -17,7 +17,7 @@ def get_writer(log_dir="experiments"):
 
 
 def log_tensorboard(writer, epoch, train_loss, test_loss):
-    writer.add_scalar("Loss", {"train": train_loss, "test": test_loss}, epoch)
+    writer.add_scalars("Loss", {"train": train_loss, "test": test_loss}, epoch)
 
 
 def log_metrics(epoch, train_loss, test_acc, log_path="log.txt"):
