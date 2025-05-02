@@ -1,4 +1,4 @@
-from models.mini_resnet import MiniResNet_v3 as MyModel 
+from models.resnet import ResNet as MyModel 
 from data.loader import get_kmnist_dataloaders 
 from train.trainer import train_one_epoch, test_one_epoch, evaluate
 
@@ -23,7 +23,7 @@ def main():
     set_seed(seed)
 
     # Set logger
-    model_name = "mini_resnet_v3"
+    model_name = "resnet"
     writer = get_writer(f"experiments/{model_name}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
 
     # Set device
@@ -54,6 +54,7 @@ def main():
         test_losses.append(test_loss)
 
         log_tensorboard(writer, epoch, train_loss, test_loss)
+        print(f"Train_loss: {train_loss:.4f}, Test_loss: {test_loss:.4f}")
 
     writer.close()
     test_acc = evaluate(network, test_loader, device)
