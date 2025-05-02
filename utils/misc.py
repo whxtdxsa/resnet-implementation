@@ -16,7 +16,7 @@ def get_writer(log_dir="experiments"):
     return SummaryWriter(log_dir=log_dir)
 
 
-def log_tensorboard(writer, epoch, train_loss, test_acc):
+def log_tensorboard(writer, epoch, train_loss, test_loss):
     writer.add_scalar("Loss", {"train": train_loss, "test": test_loss}, epoch)
 
 
