@@ -1,6 +1,10 @@
 import torch
 from tqdm import tqdm
 
+from torch.cuda.amp import autocast, GradScaler
+
+scaler = GradScaler()
+
 def train_one_epoch(network, dataloader, optimizer, criterion, device):
     network.train()
     total_loss = 0
@@ -9,10 +13,13 @@ def train_one_epoch(network, dataloader, optimizer, criterion, device):
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
 
         optimizer.zero_grad()
-        y_batch = network(x_batch)
-        loss = criterion(y_batch, t_batch)
-        loss.backward()
-        optimizer.step()
+        with autocast():
+            y_batch = network(x_batch)
+            loss = criterion(y_batch, t_batch)
+        
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
         total_loss += loss.item()
 
@@ -25,9 +32,9 @@ def test_one_epoch(network, dataloader, criterion, device):
 
     for x_batch, t_batch in tqdm(dataloader, desc="Testing"):
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-
-        y_batch = network(x_batch)
-        loss = criterion(y_batch, t_batch)
+        with autocast():
+            y_batch = network(x_batch)
+            loss = criterion(y_batch, t_batch)
 
         total_loss += loss.item()
 
@@ -42,10 +49,10 @@ def evaluate(network, dataloader, device):
     with torch.no_grad():
         for x_batch, t_batch in dataloader:
             x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-            y_batch = network(x_batch)
-            y_batch = y_batch.argmax(dim=1)
-                
+            with autocast():
+                y_batch = network(x_batch)
             
+            y_batch = y_batch.argmax(dim=1)
             correct += (y_batch == t_batch).sum().item()
             total += t_batch.size(0)
 

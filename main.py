@@ -1,4 +1,4 @@
-from models.mini_resnet import MiniResNet_v1 as MyModel 
+from models.mini_resnet import MiniResNet_v4 as MyModel 
 from data.loader import get_kmnist_dataloaders 
 from train.trainer import train_one_epoch, test_one_epoch, evaluate
 
