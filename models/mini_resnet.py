@@ -105,7 +105,6 @@ class MiniResNet_v2(nn.Module):
         return x
 
 class MiniResNet_v3(nn.Module):
-    # Sora
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=7, stride=2, padding=3)
