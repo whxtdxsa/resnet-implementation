@@ -5,9 +5,9 @@ from main import run
 param_grid = {
     "batch_size": [16, 32, 64, 128, 256],
     "lr": [0.12, 0.09, 0.06, 0.03, 0.01],
-    "model_name": ["mini_resnet"],
-    "class_name": ["MiniResNet_v4"],
-    "epochs": [15]
+    "model_name": ["test"],
+    "class_name": ["test"],
+    "epochs": [2]
 }
 
 # 조합 생성

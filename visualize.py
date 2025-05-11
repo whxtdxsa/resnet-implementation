@@ -5,37 +5,62 @@ from tbparse import SummaryReader
 folder_name = "experiments"
 file_name = "metrics.csv"
 model_dirs = {
-    "mini_resnet_v1": f"{folder_name}/MiniResNet_v1_bs64_ep10_lr0.05/{file_name}",
-    "mini_resnet_v2": f"{folder_name}/MiniResNet_v2_bs64_ep10_lr0.05/{file_name}",
-    "mini_resnet_v3": f"{folder_name}/MiniResNet_v3_bs64_ep10_lr0.05/{file_name}",
-    "mini_resnet_v4": f"{folder_name}/MiniResNet_v4_bs64_ep10_lr0.05/{file_name}",
-    "mini_resnet_v5": f"{folder_name}/MiniResNet_v5_bs64_ep10_lr0.05/{file_name}",
-    "mini_resnet_v6": f"{folder_name}/MiniResNet_v6_bs64_ep10_lr0.05/{file_name}"
+#     "bs128_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.01/{file_name}",
+     "bs128_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.03/{file_name}",
+#     "bs128_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.06/{file_name}",
+     "bs128_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.09/{file_name}",
+#     "bs128_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.12/{file_name}",
+
+     "bs16_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.01/{file_name}",
+     "bs16_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.03/{file_name}",
+#     "bs16_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.06/{file_name}",
+#     "bs16_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.09/{file_name}",
+#     "bs16_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.12/{file_name}",
+
+#     "bs256_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.01/{file_name}",
+#     "bs256_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.03/{file_name}",
+#     "bs256_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.06/{file_name}",
+     "bs256_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.09/{file_name}",
+#     "bs256_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.12/{file_name}",
+
+     "bs32_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.01/{file_name}",
+     "bs32_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.03/{file_name}",
+     "bs32_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.06/{file_name}",
+#     "bs32_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.09/{file_name}",
+#     "bs32_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.12/{file_name}",
+
+#     "bs64_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs64_ep15_lr0.01/{file_name}",
+#     "bs64_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs64_ep15_lr0.03/{file_name}",
+#     "bs64_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs64_ep15_lr0.06/{file_name}",
+#     "bs64_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs64_ep15_lr0.09/{file_name}",
+#     "bs64_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs64_ep15_lr0.12/{file_name}",
 }
 
-color_map = {
-    "mini_resnet_v1": "#0072B2",
-    "mini_resnet_v2": "#E69F00",
-    "mini_resnet_v3": "#009E73",
-    "mini_resnet_v4": "#D55E00",
-    "mini_resnet_v5": "#CC79A7",
-    "mini_resnet_v6": "#999999"
-}
+colors_25 = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
+    "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",  # Tableau 10
+
+    "#393b79", "#637939", "#8c6d31", "#843c39", "#7b4173",  # D3 Category20b
+    "#3182bd", "#31a354", "#756bb1", "#636363", "#e6550d",  # D3 Category20c
+
+    "#f781bf", "#a6cee3", "#b2df8a", "#fb9a99", "#cab2d6"   # Pastel from Set3
+]
 
 plt.figure(figsize=(10, 6))
 
-for model_name, path in model_dirs.items():
+for i, (model_name, path) in enumerate(model_dirs.items()):
 
     df = pd.read_csv(path)
-    color = color_map[model_name]
+    color = colors_25[i]
 
-    plt.plot(df["epoch"], df["train_loss"], label=f"{model_name}_train", color=color, linewidth=1.0)
-    plt.plot(df["epoch"], df["test_loss"], label=f"{model_name}_test", color=color, linewidth=3.0)
+    # plt.plot(df["epoch"], df["train_loss"], label=f"{model_name}_train", color=color, linewidth=1.0)
+    plt.plot(df["epoch"], df["test_loss"], label=f"{model_name}", color=color, linewidth=3.0)
 
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
-plt.title("Train vs Test Loss (All Models)")
-plt.legend()
-plt.grid(True)
+plt.title("Hyperparamter-wise Loss Subset")
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=5, fontsize="small")
 plt.tight_layout()
-plt.savefig("comparison_loss.png")
+plt.grid(True)
+plt.ylim(0.08, 0.2)
+plt.savefig("hyper_loss_subset.png")
