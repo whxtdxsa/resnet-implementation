@@ -1,23 +1,16 @@
 from data.loader import get_kmnist_dataloaders 
 from train.trainer import train_one_epoch, evaluate_loss, evaluate_accuracy
+from utils.misc import set_seed, init_csv_log, log_to_csv, get_amp_components
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-import yaml
 import importlib
-from utils.misc import set_seed, init_csv_log, log_to_csv, get_amp_components
 
 
-def main():
+def run(cfg):
     ### Import init_setting
-
-    # Get hyperparams
-    with open("config/default.yaml") as f: 
-        cfg = yaml.safe_load(f)
-        print(cfg)
-        model_name, class_name, batch_size, epochs, lr, seed = cfg["model_name"], cfg["class_name"], cfg["batch_size"], cfg["epochs"], cfg["lr"], cfg["seed"]
+    model_name, class_name, batch_size, epochs, lr, seed = cfg["model_name"], cfg["class_name"], cfg["batch_size"], cfg["epochs"], cfg["lr"], cfg["seed"]
     
     # Set Seed
     set_seed(seed)
@@ -70,4 +63,9 @@ def main():
         })
 
 if __name__ == "__main__":
-    main()
+    # Get hyperparams
+    import yaml
+    with open("config/default.yaml") as f: 
+        cfg = yaml.safe_load(f)
+    print(cfg)
+    run(cfg)
