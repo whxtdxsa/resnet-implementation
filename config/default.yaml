@@ -1,5 +1,5 @@
 model_name: "mini_resnet"
-class_name: "MiniResNet_v1"
+class_name: "MiniResNet_v6"
 
 batch_size: 64
 epochs: 10
