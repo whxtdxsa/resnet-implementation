@@ -35,32 +35,23 @@ def run(cfg):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(network.parameters(), lr)
 
-    train_losses = []
-    test_losses = []
-
+    test_acces = []
     # Training
     for epoch in range(1, epochs + 1):
         print(f"Epoch {epoch}/{epochs}")
         train_loss = train_one_epoch(network, train_loader, optimizer, criterion, device, amp_context, scaler)
-        train_losses.append(train_loss)
 
-        test_loss = evaluate_loss(network, test_loader, criterion, device, amp_context)
-        test_losses.append(test_loss)
-
-        print(f"Train_loss: {train_loss:.4f}, Test_loss: {test_loss:.4f}")
-
-    test_acc = evaluate_accuracy(network, test_loader, device, amp_context)
-    print(f"Test Acc: {test_acc:.4f}")
-    experiment_name = f"{class_name}_bs{batch_size}_ep{epochs}_lr{lr}"
+        test_acc = evaluate_accuracy(network, test_loader, device, amp_context)
+        test_acces.append(test_acc)
+    experiment_name = f"acc"
     log_path = f"experiments/{experiment_name}/metrics.csv"
-    init_csv_log(log_path, ["epoch", "train_loss", "test_loss"])
+    init_csv_log(log_path, ["epoch", "acc"])
 
     # Logging
     for epoch in range(len(train_losses)):
         log_to_csv(log_path, {
             "epoch": epoch,
-            "train_loss": train_losses[epoch],
-            "test_loss": test_losses[epoch]
+            "test_accuracy": test_acces[epoch]
         })
 
 if __name__ == "__main__":
