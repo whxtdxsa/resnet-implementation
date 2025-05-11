@@ -33,9 +33,9 @@ def get_amp_components(device):
     """
     if device.type == 'cuda':
         from torch.amp import autocast
-        from torch.cuda.amp import GradScaler
+        from torch.amp import GradScaler
         amp_context = autocast(device_type='cuda')
-        scaler = GradScaler(device_type='cuda')
+        scaler = GradScaler()
     else:
         amp_context = nullcontext()
         scaler = None
