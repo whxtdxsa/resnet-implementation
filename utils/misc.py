@@ -24,3 +24,22 @@ def log_metrics(epoch, train_loss, test_acc, log_path="log.txt"):
     with open(log_path, "a") as f:
         f.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Test Acc = {test_acc:. 4f}\n")
 
+
+from contextlib import nullcontext
+
+def get_amp_components(device):
+    """
+    device (torch.device): 'cuda' or 'cpu'
+    return:
+        amp_context: autocast context or nullcontext
+        scaler: GradScaler or None
+    """
+    if device.type == 'cuda':
+        from torch.amp import autocast
+        from torch.cuda.amp import GradScaler
+        amp_context = autocast(device_type='cuda')
+        scaler = GradScaler()
+    else:
+        amp_context = nullcontext()
+        scaler = None
+    return amp_context, scaler

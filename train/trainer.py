@@ -1,38 +1,38 @@
 import torch
 from tqdm import tqdm
 
-from torch.cuda.amp import autocast, GradScaler
-
-scaler = GradScaler()
-
-def train_one_epoch(network, dataloader, optimizer, criterion, device):
+def train_one_epoch(network, dataloader, optimizer, criterion, device, amp_context=nullcontext(), scaler=None):
     network.train()
     total_loss = 0
-
+    
     for x_batch, t_batch in tqdm(dataloader, desc="Training"):
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
 
         optimizer.zero_grad()
-        with autocast():
+        with amp_context:
             y_batch = network(x_batch)
             loss = criterion(y_batch, t_batch)
         
-        scaler.scale(loss).backward()
-        scaler.step(optimizer)
-        scaler.update()
+        if scaler:
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            loss.backward()
+            optimizer.stemp()
 
         total_loss += loss.item()
 
     return total_loss / len(dataloader)
 
 
-def test_one_epoch(network, dataloader, criterion, device):
+def test_one_epoch(network, dataloader, criterion, device, amp_context=nullcontext()):
     network.eval()
     total_loss = 0
 
     for x_batch, t_batch in tqdm(dataloader, desc="Testing"):
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-        with autocast():
+        with amp_context:
             y_batch = network(x_batch)
             loss = criterion(y_batch, t_batch)
 
@@ -41,7 +41,7 @@ def test_one_epoch(network, dataloader, criterion, device):
     return total_loss / len(dataloader)
 
 
-def evaluate(network, dataloader, device):
+def evaluate(network, dataloader, device, amp_context=nullcontext()):
     network.eval()
     correct = 0
     total = 0
@@ -49,7 +49,7 @@ def evaluate(network, dataloader, device):
     with torch.no_grad():
         for x_batch, t_batch in dataloader:
             x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-            with autocast():
+            with amp_context():
                 y_batch = network(x_batch)
             
             y_batch = y_batch.argmax(dim=1)

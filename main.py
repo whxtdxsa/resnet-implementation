@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 import yaml
-from utils.misc import set_seed, get_writer, log_tensorboard
+from utils.misc import set_seed, get_writer, log_tensorboard, get_amp_components
 
 
 def main():
@@ -23,12 +23,14 @@ def main():
     set_seed(seed)
 
     # Set logger
-    model_name = "mini_resnet_v1"
+    model_name = "mini_resnet_v4"
+    print(model_name)
     writer = get_writer(f"experiments/{model_name}_lr-{lr}_bs-{batch_size}_ep-{epochs}")
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
+    amp_context, scaler = get_amp_components(device)
 
 
     ### Define train procedure
@@ -47,17 +49,17 @@ def main():
     # Training
     for epoch in range(1, epochs + 1):
         print(f"Epoch {epoch}/{epochs}")
-        train_loss = train_one_epoch(network, train_loader, optimizer, criterion, device)
+        train_loss = train_one_epoch(network, train_loader, optimizer, criterion, device, amp_context, scaler)
         train_losses.append(train_loss)
 
-        test_loss = test_one_epoch(network, test_loader, criterion, device)
+        test_loss = test_one_epoch(network, test_loader, criterion, device, amp_context)
         test_losses.append(test_loss)
 
         log_tensorboard(writer, epoch, train_loss, test_loss)
         print(f"Train_loss: {train_loss:.4f}, Test_loss: {test_loss:.4f}")
 
     writer.close()
-    test_acc = evaluate(network, test_loader, device)
+    test_acc = evaluate(network, test_loader, device, amp_context)
     print(f"Test Acc: {test_acc:.4f}")
 
 main()
