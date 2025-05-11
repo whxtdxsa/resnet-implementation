@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader, Subset
 
 def get_kmnist_dataloaders(batch_size=64):
     transform = transforms.Compose([
-        transforms.Resize((224, 244)),
+        # transforms.Resize((224, 244)),
         transforms.ToTensor(),
     ])
 

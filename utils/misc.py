@@ -1,8 +1,8 @@
 import random
 import numpy as np
 import torch
-
-from torch.utils.tensorboard import SummaryWriter
+import os
+import csv
 
 def set_seed(seed: int = 42):
     random.seed(seed)
@@ -11,19 +11,16 @@ def set_seed(seed: int = 42):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
+def init_csv_log(path, fieldnames):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, mode='w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
 
-def get_writer(log_dir="experiments"):
-    return SummaryWriter(log_dir=log_dir)
-
-
-def log_tensorboard(writer, epoch, train_loss, test_loss):
-    writer.add_scalars("Loss", {"train": train_loss, "test": test_loss}, epoch)
-
-
-def log_metrics(epoch, train_loss, test_acc, log_path="log.txt"):
-    with open(log_path, "a") as f:
-        f.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Test Acc = {test_acc:. 4f}\n")
-
+def log_to_csv(path, data_dict):
+    with open(path, mode='a', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=data_dict.keys())
+        writer.writerow(data_dict)
 
 from contextlib import nullcontext
 
@@ -43,3 +40,5 @@ def get_amp_components(device):
         amp_context = nullcontext()
         scaler = None
     return amp_context, scaler
+
+

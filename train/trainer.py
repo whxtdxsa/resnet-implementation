@@ -1,11 +1,11 @@
 import torch
 from tqdm import tqdm
 
-def train_one_epoch(network, dataloader, optimizer, criterion, device, amp_context=nullcontext(), scaler=None):
+def train_one_epoch(network, dataloader, optimizer, criterion, device, amp_context=None, scaler=None):
     network.train()
     total_loss = 0
     
-    for x_batch, t_batch in tqdm(dataloader, desc="Training"):
+    for x_batch, t_batch in tqdm(dataloader, desc="Training", leave=False):
         x_batch, t_batch = x_batch.to(device), t_batch.to(device)
 
         optimizer.zero_grad()
@@ -19,29 +19,31 @@ def train_one_epoch(network, dataloader, optimizer, criterion, device, amp_conte
             scaler.update()
         else:
             loss.backward()
-            optimizer.stemp()
+            optimizer.step()
 
         total_loss += loss.item()
 
     return total_loss / len(dataloader)
 
 
-def test_one_epoch(network, dataloader, criterion, device, amp_context=nullcontext()):
+def evaluate_loss(network, dataloader, criterion, device, amp_context=None):
     network.eval()
     total_loss = 0
 
-    for x_batch, t_batch in tqdm(dataloader, desc="Testing"):
-        x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-        with amp_context:
-            y_batch = network(x_batch)
-            loss = criterion(y_batch, t_batch)
+    with torch.no_grad():
+        for x_batch, t_batch in dataloader:
+            x_batch, t_batch = x_batch.to(device), t_batch.to(device)
 
-        total_loss += loss.item()
+            with amp_context:
+                y_batch = network(x_batch)
+                loss = criterion(y_batch, t_batch)
+
+            total_loss += loss.item()
 
     return total_loss / len(dataloader)
 
 
-def evaluate(network, dataloader, device, amp_context=nullcontext()):
+def evaluate_accuracy(network, dataloader, device, amp_context=None):
     network.eval()
     correct = 0
     total = 0
@@ -49,7 +51,7 @@ def evaluate(network, dataloader, device, amp_context=nullcontext()):
     with torch.no_grad():
         for x_batch, t_batch in dataloader:
             x_batch, t_batch = x_batch.to(device), t_batch.to(device)
-            with amp_context():
+            with amp_context:
                 y_batch = network(x_batch)
             
             y_batch = y_batch.argmax(dim=1)
@@ -57,6 +59,7 @@ def evaluate(network, dataloader, device, amp_context=nullcontext()):
             total += t_batch.size(0)
 
     return correct / total
+
 
 def save_checkpoint(model, path="checkpoint.pt"):
     torch.save(model.state_dict(), path)
