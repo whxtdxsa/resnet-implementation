@@ -5,27 +5,6 @@ from tbparse import SummaryReader
 folder_name = "experiments"
 file_name = "metrics.csv"
 model_dirs = {
-#     "bs128_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.01/{file_name}",
-     "bs128_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.03/{file_name}",
-#     "bs128_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.06/{file_name}",
-     "bs128_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.09/{file_name}",
-#     "bs128_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs128_ep15_lr0.12/{file_name}",
-
-     "bs16_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.01/{file_name}",
-     "bs16_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.03/{file_name}",
-#     "bs16_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.06/{file_name}",
-#     "bs16_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.09/{file_name}",
-#     "bs16_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs16_ep15_lr0.12/{file_name}",
-
-#     "bs256_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.01/{file_name}",
-#     "bs256_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.03/{file_name}",
-#     "bs256_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.06/{file_name}",
-     "bs256_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.09/{file_name}",
-#     "bs256_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs256_ep15_lr0.12/{file_name}",
-
-     "bs32_ep15_lr_0.01": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.01/{file_name}",
-     "bs32_ep15_lr_0.03": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.03/{file_name}",
-     "bs32_ep15_lr_0.06": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.06/{file_name}",
 #     "bs32_ep15_lr_0.09": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.09/{file_name}",
 #     "bs32_ep15_lr_0.12": f"{folder_name}/MiniResNet_v4_bs32_ep15_lr0.12/{file_name}",
 
@@ -54,13 +33,13 @@ for i, (model_name, path) in enumerate(model_dirs.items()):
     color = colors_25[i]
 
     # plt.plot(df["epoch"], df["train_loss"], label=f"{model_name}_train", color=color, linewidth=1.0)
-    plt.plot(df["epoch"], df["test_loss"], label=f"{model_name}", color=color, linewidth=3.0)
+    plt.plot(df["epoch"], df["acc"], label=f"{model_name}", color=color, linewidth=3.0)
 
 plt.xlabel("Epoch")
-plt.ylabel("Loss")
-plt.title("Hyperparamter-wise Loss Subset")
+plt.ylabel("Accuracy")
+plt.title("Accuracy of MiniResNet_v4")
 plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=5, fontsize="small")
 plt.tight_layout()
 plt.grid(True)
-plt.ylim(0.08, 0.2)
-plt.savefig("hyper_loss_subset.png")
+# plt.ylim(0.08, 0.2)
+plt.savefig("acc.png")
