@@ -48,7 +48,7 @@ def run(cfg):
     init_csv_log(log_path, ["epoch", "acc"])
 
     # Logging
-    for epoch in range(len(train_losses)):
+    for epoch in range(len(test_acces)):
         log_to_csv(log_path, {
             "epoch": epoch,
             "test_accuracy": test_acces[epoch]

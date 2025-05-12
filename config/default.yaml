@@ -3,5 +3,5 @@ class_name: "MiniResNet_v4"
 
 batch_size: 32
 epochs: 15
-lr: 0.06
+lr: 0.03
 seed: 42
