@@ -1,10 +1,3 @@
-# Implement ResNet
-
-Date: April 27, 2025
-Multi-select: Model Structure, Vision
-Select: Study
-Status: In progress
-
 # Overview
 
 
