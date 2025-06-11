@@ -34,7 +34,7 @@ AlexNet과 ResNet의 구조는 아래의 논문들을 참고 했습니다.
 1. Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). ImageNet classification with deep convolutional neural networks. Advances in neural information processing systems, 25, 1097-1105.
 2. He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep residual learning for image recognition. Proceedings of the IEEE conference on computer vision and pattern recognition (CVPR), 770–778.
 
-# Enviornment
+# Environment
 
 
 ### Development Environment
